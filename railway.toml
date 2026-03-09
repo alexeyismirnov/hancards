@@ -1,0 +1,33 @@
+# Railway deployment configuration for HànCards
+# This file configures both frontend and backend services
+
+# Backend Service Configuration
+[backend]
+name = "hancards-backend"
+source = "./backend"
+
+[backend.build]
+builder = "dockerfile"
+dockerfile = "Dockerfile"
+
+[backend.healthcheck]
+path = "/health"
+interval = 30
+timeout = 10
+retries = 3
+
+# Frontend Service Configuration
+[frontend]
+name = "hancards-frontend"
+source = "./frontend"
+
+[frontend.build]
+builder = "dockerfile"
+dockerfile = "Dockerfile"
+buildArgs = ["VITE_API_URL"]
+
+[frontend.healthcheck]
+path = "/health"
+interval = 30
+timeout = 10
+retries = 3
