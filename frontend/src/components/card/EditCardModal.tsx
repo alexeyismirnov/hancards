@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -11,6 +11,10 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/services/card.service';
+import { CharacterInput } from '@/components/dictionary/CharacterInput';
+import { DictionarySuggestions } from '@/components/dictionary/DictionarySuggestions';
+import { DictionaryEntry } from '@/services/dictionary.service';
+import { useAuthContext } from '@/contexts/AuthContext';
 
 interface EditCardModalProps {
   card: Card | null;
@@ -27,10 +31,15 @@ export function EditCardModal({
   onSubmit,
   isLoading = false,
 }: EditCardModalProps) {
+  const { user } = useAuthContext();
   const [character, setCharacter] = useState('');
   const [pinyin, setPinyin] = useState('');
   const [meaning, setMeaning] = useState('');
   const [error, setError] = useState('');
+  const [suggestions, setSuggestions] = useState<DictionaryEntry[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  const charVariant = user?.charVariant || 'simplified';
 
   useEffect(() => {
     if (card) {
@@ -39,6 +48,23 @@ export function EditCardModal({
       setMeaning(card.meaning);
     }
   }, [card]);
+
+  const handleSuggestionsFound = useCallback((entries: DictionaryEntry[]) => {
+    setSuggestions(entries);
+    setShowSuggestions(entries.length > 0);
+  }, []);
+
+  const handleSelectSuggestion = useCallback((entry: DictionaryEntry) => {
+    // Auto-fill fields with selected suggestion
+    // Use the character variant based on user preference
+    const selectedChar = charVariant === 'traditional' ? entry.traditional : entry.simplified;
+    setCharacter(selectedChar);
+    setPinyin(entry.pinyin);
+    setMeaning(entry.definitions[0] || '');
+    setShowSuggestions(false);
+    setSuggestions([]);
+    setError('');
+  }, [charVariant]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,6 +87,8 @@ export function EditCardModal({
     try {
       await onSubmit(card.id, character.trim(), pinyin.trim(), meaning.trim());
       setError('');
+      setSuggestions([]);
+      setShowSuggestions(false);
       onOpenChange(false);
     } catch (err) {
       setError('Failed to update card. Please try again.');
@@ -70,9 +98,15 @@ export function EditCardModal({
   const handleOpenChange = (newOpen: boolean) => {
     if (!newOpen) {
       setError('');
+      setSuggestions([]);
+      setShowSuggestions(false);
     }
     onOpenChange(newOpen);
   };
+
+  // Hide suggestions when clicking outside or on other inputs
+  const handlePinyinFocus = () => setShowSuggestions(false);
+  const handleMeaningFocus = () => setShowSuggestions(false);
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -81,23 +115,32 @@ export function EditCardModal({
           <DialogTitle>Edit Card</DialogTitle>
           <DialogDescription>
             Update the character, pinyin, or meaning for this flashcard.
+            Dictionary suggestions will appear automatically for Chinese characters.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="py-4 space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="edit-character">Character</Label>
-              <Input
-                id="edit-character"
-                placeholder="汉字"
+            <div className="space-y-2 relative">
+              <CharacterInput
                 value={character}
-                onChange={(e) => {
-                  setCharacter(e.target.value);
-                  setError('');
-                }}
+                onChange={setCharacter}
+                onSuggestionsFound={handleSuggestionsFound}
+                onError={(err) => err && console.error('Dictionary lookup error:', err)}
                 disabled={isLoading}
+                id="edit-character"
+                label="Character"
+                placeholder="汉字"
                 autoFocus
+                skipInitialLookup
+                variant={charVariant}
               />
+              {showSuggestions && (
+                <DictionarySuggestions
+                  entries={suggestions}
+                  onSelect={handleSelectSuggestion}
+                  variant={charVariant}
+                />
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="edit-pinyin">Pinyin</Label>
@@ -109,6 +152,7 @@ export function EditCardModal({
                   setPinyin(e.target.value);
                   setError('');
                 }}
+                onFocus={handlePinyinFocus}
                 disabled={isLoading}
               />
             </div>
@@ -122,6 +166,7 @@ export function EditCardModal({
                   setMeaning(e.target.value);
                   setError('');
                 }}
+                onFocus={handleMeaningFocus}
                 disabled={isLoading}
               />
             </div>

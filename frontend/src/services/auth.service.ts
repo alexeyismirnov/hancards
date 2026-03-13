@@ -1,8 +1,11 @@
 import { api } from '@/lib/api';
 
+export type CharacterVariant = 'simplified' | 'traditional';
+
 export interface User {
   id: string;
   email: string;
+  charVariant: CharacterVariant;
 }
 
 export interface AuthResponse {
@@ -18,6 +21,10 @@ export interface RegisterInput {
 export interface LoginInput {
   email: string;
   password: string;
+}
+
+export interface UpdatePreferencesInput {
+  charVariant: CharacterVariant;
 }
 
 export const authService = {
@@ -40,5 +47,12 @@ export const authService = {
    */
   async getCurrentUser(token: string): Promise<{ user: User }> {
     return api.get<{ user: User }>('/api/auth/me', token);
+  },
+
+  /**
+   * Update user preferences
+   */
+  async updatePreferences(data: UpdatePreferencesInput, token: string): Promise<{ user: User }> {
+    return api.patch<{ user: User }>('/api/auth/preferences', data, token);
   },
 };

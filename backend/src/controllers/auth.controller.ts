@@ -45,6 +45,7 @@ export async function register(req: Request, res: Response, next: NextFunction) 
       select: {
         id: true,
         email: true,
+        charVariant: true,
       },
     });
 
@@ -104,6 +105,7 @@ export async function login(req: Request, res: Response, next: NextFunction) {
       user: {
         id: user.id,
         email: user.email,
+        charVariant: user.charVariant,
       },
     });
   } catch (error) {
@@ -128,6 +130,7 @@ export async function getCurrentUser(req: Request, res: Response, next: NextFunc
       select: {
         id: true,
         email: true,
+        charVariant: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -136,6 +139,47 @@ export async function getCurrentUser(req: Request, res: Response, next: NextFunc
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
+
+    res.json({ user });
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * Update user preferences (character variant)
+ */
+export async function updatePreferences(req: Request, res: Response, next: NextFunction) {
+  try {
+    const userId = req.userId;
+
+    if (!userId) {
+      return res.status(401).json({ error: 'Not authenticated' });
+    }
+
+    const { charVariant } = req.body;
+
+    // Validate charVariant
+    if (charVariant !== 'simplified' && charVariant !== 'traditional') {
+      return res.status(400).json({
+        error: 'Invalid character variant. Must be "simplified" or "traditional"',
+      });
+    }
+
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        charVariant,
+        updatedAt: new Date(),
+      },
+      select: {
+        id: true,
+        email: true,
+        charVariant: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
 
     res.json({ user });
   } catch (error) {

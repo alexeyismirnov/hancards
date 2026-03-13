@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { register, login, getCurrentUser } from '../controllers/auth.controller';
+import { register, login, getCurrentUser, updatePreferences } from '../controllers/auth.controller';
 import { requireAuth } from '../middleware/auth.middleware';
 
 const router = Router();
@@ -24,5 +24,12 @@ router.post('/login', login);
  * @access  Private
  */
 router.get('/me', requireAuth, getCurrentUser);
+
+/**
+ * @route   PATCH /api/auth/preferences
+ * @desc    Update user preferences (character variant)
+ * @access  Private
+ */
+router.patch('/preferences', requireAuth, updatePreferences);
 
 export default router;

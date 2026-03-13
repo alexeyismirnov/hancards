@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { authService, User } from '@/services/auth.service';
+import { authService, User, CharacterVariant } from '@/services/auth.service';
 
 const TOKEN_KEY = 'hancards_token';
 
@@ -11,6 +11,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string) => Promise<void>;
   logout: () => void;
+  updateCharVariant: (variant: CharacterVariant) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -70,6 +71,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
   }, []);
 
+  const updateCharVariant = useCallback(async (variant: CharacterVariant) => {
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    
+    const response = await authService.updatePreferences({ charVariant: variant }, token);
+    setUser(response.user);
+  }, [token]);
+
   const value: AuthContextType = {
     user,
     token,
@@ -78,6 +88,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     login,
     register,
     logout,
+    updateCharVariant,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
