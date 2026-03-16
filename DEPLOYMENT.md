@@ -73,6 +73,20 @@ Alternatively, you can add a start script that runs migrations before starting:
 "start": "npx prisma migrate deploy && node dist/index.js"
 ```
 
+#### Import CEDICT Dictionary Data
+
+After running migrations, import the CEDICT dictionary data required for the dictionary autosuggest feature:
+
+```bash
+# Using Railway CLI
+railway run --service backend npm run import:cedict -- ./cedict_ts.u8
+
+# Or via Railway dashboard terminal
+npm run import:cedict -- ./cedict_ts.u8
+```
+
+**Note**: The cedict_ts.u8 file is included in the Docker image and will be available at the specified path.
+
 ### 4. Deploy Frontend Service
 
 #### Create Frontend Service
