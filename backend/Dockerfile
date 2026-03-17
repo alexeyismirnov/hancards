@@ -53,4 +53,4 @@ EXPOSE 3001
 
 # Start the application
 # Prisma migrations are handled via postinstall or railway.toml
-CMD ["npm", "start"]
+CMD ["node", "dist/index.js"]
