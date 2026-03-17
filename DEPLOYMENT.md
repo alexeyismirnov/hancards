@@ -57,15 +57,50 @@ NODE_ENV=production
 
 #### Run Database Migrations
 
-After the first deployment, run Prisma migrations:
+After the first deployment, run Prisma migrations. **Important**: The default `DATABASE_URL` uses Railway's internal hostname (`postgres.railway.internal`) which only resolves within Railway's network, so running migrations from your local machine requires the public database URL.
 
-```bash
-# Using Railway CLI
-railway run --service backend npx prisma migrate deploy
+**Option 1: Railway CLI with Service Context (Recommended)**
 
-# Or via Railway dashboard terminal
-npx prisma migrate deploy
-```
+Use the Railway CLI to run commands in the context of your deployed service:
+
+1. Install Railway CLI (if not already installed):
+   ```bash
+   npm i -g @railway/cli
+   ```
+
+2. Login and link to your project:
+   ```bash
+   railway login
+   railway link
+   ```
+
+3. Run migrations using the service context:
+   ```bash
+   railway run --service backend npx prisma migrate deploy
+   ```
+
+This works because the command runs within Railway's network where `postgres.railway.internal` resolves correctly.
+
+**Option 2: Local Machine with Public Database URL**
+
+If you prefer running from your local machine with a direct database connection:
+
+1. Go to Railway Dashboard → Your Project → PostgreSQL Service
+2. Navigate to the **Variables** tab
+3. Find the public `DATABASE_URL` (not the internal one)
+   - The public URL uses a hostname like `containers-us-west-xxx.railway.app` or `monorail.proxy.railway.internal`
+   - The internal URL uses `postgres.railway.internal` (this won't work locally)
+4. Copy the public connection string
+5. Set it as an environment variable locally:
+   ```bash
+   export DATABASE_URL="postgresql://postgres:password@containers-us-west-xxx.railway.app:5432/railway"
+   ```
+6. Run the migration:
+   ```bash
+   npx prisma migrate deploy
+   ```
+
+**Option 3: Automatic Migrations on Deploy**
 
 Alternatively, you can add a start script that runs migrations before starting:
 
@@ -73,19 +108,34 @@ Alternatively, you can add a start script that runs migrations before starting:
 "start": "npx prisma migrate deploy && node dist/index.js"
 ```
 
+**Note**: This approach may cause issues if multiple instances start simultaneously and try to run migrations at the same time.
+
 #### Import CEDICT Dictionary Data
 
-After running migrations, import the CEDICT dictionary data required for the dictionary autosuggest feature:
+After running migrations, import the CEDICT dictionary data required for the dictionary autosuggest feature. The same network considerations apply as with migrations.
+
+**Option 1: Railway CLI with Service Context (Recommended)**
+
+Use the Railway CLI to run the import command in the context of your deployed service:
 
 ```bash
-# Using Railway CLI
 railway run --service backend npm run import:cedict -- ./cedict_ts.u8
-
-# Or via Railway dashboard terminal
-npm run import:cedict -- ./cedict_ts.u8
 ```
 
-**Note**: The cedict_ts.u8 file is included in the Docker image and will be available at the specified path.
+This works because the command runs within Railway's network where `postgres.railway.internal` resolves correctly, and the `cedict_ts.u8` file is included in the Docker image.
+
+**Option 2: Local Machine with Public Database URL**
+
+If you prefer running from your local machine:
+
+1. Get the public `DATABASE_URL` from Railway Dashboard (see instructions in "Run Database Migrations" section)
+2. Set it as an environment variable locally
+3. Run the import:
+   ```bash
+   npm run import:cedict -- ./cedict_ts.u8
+   ```
+
+**Note**: For local execution, ensure the `cedict_ts.u8` file exists in your local `backend/` directory.
 
 ### 4. Deploy Frontend Service
 
@@ -172,10 +222,15 @@ railway up
 2. Check if PostgreSQL service is running
 3. Ensure Prisma schema matches database
 
+**Testing database connection:**
+
+Use the Railway CLI to test the connection from within Railway's network:
+
 ```bash
-# Test database connection
 railway run --service backend npx prisma db push
 ```
+
+Or use the public `DATABASE_URL` from Railway's PostgreSQL service variables if testing from your local machine.
 
 ### Frontend Not Connecting to Backend
 
@@ -215,15 +270,27 @@ The `postinstall` script runs `prisma generate` automatically.
 
 ### Running Migrations on Deploy
 
-Option A: Manual (recommended for first deploy)
+**Option A: Railway CLI with Service Context (Recommended)**
+
+Run migrations using the Railway CLI from your local machine:
+
 ```bash
 railway run --service backend npx prisma migrate deploy
 ```
 
-Option B: Automatic (modify backend package.json)
+This executes the command within Railway's network where the internal database hostname resolves correctly.
+
+**Option B: Local Machine with Public Database URL**
+
+Use the public `DATABASE_URL` from Railway's PostgreSQL service variables and run migrations locally. See the "Run Database Migrations" section for detailed instructions on obtaining the public URL.
+
+**Option C: Automatic (modify backend package.json)**
+
 ```json
 "start": "npx prisma migrate deploy && node dist/index.js"
 ```
+
+**Note**: Automatic migrations may cause issues if multiple instances start simultaneously and try to run migrations at the same time.
 
 ## Monitoring
 
