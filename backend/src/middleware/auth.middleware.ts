@@ -35,7 +35,7 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
 
     // Attach user ID to request object
     req.userId = payload.userId;
-    next();
+    return next();
   } catch (error) {
     return res.status(401).json({
       error: 'Authentication failed. Please log in again.',
@@ -46,7 +46,7 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
 /**
  * Optional middleware - attaches userId if token present, but doesn't require it
  */
-export function optionalAuth(req: Request, res: Response, next: NextFunction) {
+export function optionalAuth(req: Request, _res: Response, next: NextFunction) {
   try {
     const authHeader = req.headers.authorization;
 
@@ -59,9 +59,9 @@ export function optionalAuth(req: Request, res: Response, next: NextFunction) {
       }
     }
 
-    next();
+    return next();
   } catch (error) {
     // Continue without authentication
-    next();
+    return next();
   }
 }

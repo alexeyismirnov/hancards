@@ -23,9 +23,9 @@ export async function getDecks(req: Request, res: Response, next: NextFunction) 
       },
     });
 
-    res.json({ decks });
+    return res.json({ decks });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 }
 
@@ -57,9 +57,9 @@ export async function getDeck(req: Request, res: Response, next: NextFunction) {
       return res.status(404).json({ error: 'Deck not found' });
     }
 
-    res.json({ deck });
+    return res.json({ deck });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 }
 
@@ -97,9 +97,9 @@ export async function createDeck(req: Request, res: Response, next: NextFunction
       },
     });
 
-    res.status(201).json({ deck });
+    return res.status(201).json({ deck });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 }
 
@@ -145,9 +145,9 @@ export async function updateDeck(req: Request, res: Response, next: NextFunction
       },
     });
 
-    res.json({ deck });
+    return res.json({ deck });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 }
 
@@ -176,8 +176,8 @@ export async function deleteDeck(req: Request, res: Response, next: NextFunction
       where: { id },
     });
 
-    res.json({ success: true });
+    return res.json({ success: true });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 }

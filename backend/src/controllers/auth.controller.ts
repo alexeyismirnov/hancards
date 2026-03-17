@@ -52,12 +52,12 @@ export async function register(req: Request, res: Response, next: NextFunction) 
     // Generate JWT token
     const token = signToken({ userId: user.id });
 
-    res.status(201).json({
+    return res.status(201).json({
       token,
       user,
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 }
 
@@ -100,7 +100,7 @@ export async function login(req: Request, res: Response, next: NextFunction) {
     // Generate JWT token
     const token = signToken({ userId: user.id });
 
-    res.json({
+    return res.json({
       token,
       user: {
         id: user.id,
@@ -109,7 +109,7 @@ export async function login(req: Request, res: Response, next: NextFunction) {
       },
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 }
 
@@ -140,9 +140,9 @@ export async function getCurrentUser(req: Request, res: Response, next: NextFunc
       return res.status(404).json({ error: 'User not found' });
     }
 
-    res.json({ user });
+    return res.json({ user });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 }
 
@@ -181,8 +181,8 @@ export async function updatePreferences(req: Request, res: Response, next: NextF
       },
     });
 
-    res.json({ user });
+    return res.json({ user });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 }

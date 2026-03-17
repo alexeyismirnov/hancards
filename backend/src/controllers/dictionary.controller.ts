@@ -33,12 +33,12 @@ export async function lookup(req: Request, res: Response, next: NextFunction) {
       },
     });
 
-    res.json({
+    return res.json({
       entries,
       count: entries.length,
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 }
 
@@ -61,8 +61,8 @@ export async function getEntry(req: Request, res: Response, next: NextFunction) 
       });
     }
 
-    res.json({ entry });
+    return res.json({ entry });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 }

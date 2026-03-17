@@ -31,9 +31,9 @@ export async function getCards(req: Request, res: Response, next: NextFunction) 
       orderBy: { createdAt: 'asc' },
     });
 
-    res.json({ cards });
+    return res.json({ cards });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 }
 
@@ -81,9 +81,9 @@ export async function createCard(req: Request, res: Response, next: NextFunction
       },
     });
 
-    res.status(201).json({ card });
+    return res.status(201).json({ card });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 }
 
@@ -129,9 +129,9 @@ export async function updateCard(req: Request, res: Response, next: NextFunction
       data: { character, pinyin, meaning },
     });
 
-    res.json({ card });
+    return res.json({ card });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 }
 
@@ -165,8 +165,8 @@ export async function deleteCard(req: Request, res: Response, next: NextFunction
       where: { id },
     });
 
-    res.json({ success: true });
+    return res.json({ success: true });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 }
