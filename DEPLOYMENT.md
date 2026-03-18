@@ -148,14 +148,19 @@ If you prefer running from your local machine:
 
 #### Configure Frontend Environment Variables
 
-Set these environment variables:
+The frontend requires `VITE_API_URL` to be set to the backend's **public** URL. This is critical because the frontend runs in user browsers, which cannot resolve Railway's internal hostnames.
 
-```bash
-# Build-time variable (must be set before deployment)
-VITE_API_URL=https://your-backend-service.up.railway.app
-```
+**Steps to configure:**
 
-**Note**: Replace `your-backend-service` with your actual backend Railway URL.
+1. Go to Railway Dashboard → Backend Service → Settings → Domains
+2. Copy the public URL (e.g., `https://hancards-backend.up.railway.app`)
+3. Go to Railway Dashboard → Frontend Service → Variables
+4. Set `VITE_API_URL` to the backend's public URL
+5. **Important**: Redeploy the frontend service after setting this variable
+
+**Why redeploy is required:** Vite embeds environment variables at build time. Changing `VITE_API_URL` requires a full redeploy for the new value to take effect.
+
+**Critical Note:** Do NOT use `*.railway.internal` hostnames (e.g., `backend.railway.internal`). These only resolve within Railway's private network and won't work from user browsers. Always use the public URL from the Domains section.
 
 #### Configure Build Args
 

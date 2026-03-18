@@ -5,6 +5,7 @@ import authRoutes from './routes/auth.routes';
 import deckRoutes from './routes/deck.routes';
 import cardRoutes from './routes/card.routes';
 import dictionaryRoutes from './routes/dictionary.routes';
+import reviewRoutes from './routes/review.routes';
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/decks', deckRoutes);
 app.use('/api', cardRoutes);
 app.use('/api/dictionary', dictionaryRoutes);
+app.use('/api', reviewRoutes);
 
 // 404 handler
 app.use((_req, res) => {

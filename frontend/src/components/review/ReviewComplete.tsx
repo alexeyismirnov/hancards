@@ -1,17 +1,25 @@
 import { Button } from '@/components/ui/button';
-import { RotateCcw, ArrowLeft, PartyPopper } from 'lucide-react';
+import { RotateCcw, ArrowLeft, PartyPopper, CheckCircle, XCircle } from 'lucide-react';
 
 interface ReviewCompleteProps {
   totalCards: number;
+  correctCount?: number;
   onReviewAgain: () => void;
   onExit: () => void;
 }
 
 export function ReviewComplete({
   totalCards,
+  correctCount,
   onReviewAgain,
   onExit,
 }: ReviewCompleteProps) {
+  // Calculate statistics
+  const incorrectCount = correctCount !== undefined ? totalCards - correctCount : undefined;
+  const accuracyPercentage = correctCount !== undefined 
+    ? Math.round((correctCount / totalCards) * 100) 
+    : undefined;
+
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
       {/* Celebration Icon */}
@@ -31,13 +39,49 @@ export function ReviewComplete({
 
       {/* Stats Card */}
       <div className="w-full max-w-sm bg-card border rounded-xl p-6 mb-8">
-        <div className="flex items-center justify-center gap-2 mb-4">
-          <span className="text-4xl">🎉</span>
-          <span className="text-2xl font-bold">Great job!</span>
-          <span className="text-4xl">🎉</span>
+        {/* Accuracy Display */}
+        {accuracyPercentage !== undefined && (
+          <div className="mb-6">
+            <div className="text-5xl font-bold text-primary mb-2">
+              {accuracyPercentage}%
+            </div>
+            <p className="text-sm text-muted-foreground">Accuracy</p>
+          </div>
+        )}
+
+        {/* Detailed Stats */}
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          {/* Correct Count */}
+          <div className="flex flex-col items-center p-3 bg-green-50 dark:bg-green-950/30 rounded-lg">
+            <div className="flex items-center gap-1 text-green-600 dark:text-green-400 mb-1">
+              <CheckCircle className="h-5 w-5" />
+              <span className="text-2xl font-bold">{correctCount ?? 0}</span>
+            </div>
+            <span className="text-xs text-muted-foreground">Correct</span>
+          </div>
+
+          {/* Incorrect Count */}
+          <div className="flex flex-col items-center p-3 bg-red-50 dark:bg-red-950/30 rounded-lg">
+            <div className="flex items-center gap-1 text-red-600 dark:text-red-400 mb-1">
+              <XCircle className="h-5 w-5" />
+              <span className="text-2xl font-bold">{incorrectCount ?? 0}</span>
+            </div>
+            <span className="text-xs text-muted-foreground">Needs Review</span>
+          </div>
         </div>
-        <p className="text-muted-foreground">
-          Keep up the good work! Regular practice is the key to mastering Chinese characters.
+
+        {/* Encouragement Message */}
+        <div className="flex items-center justify-center gap-2 mb-2">
+          <span className="text-2xl">🎉</span>
+          <span className="text-lg font-semibold">Great job!</span>
+          <span className="text-2xl">🎉</span>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          {accuracyPercentage !== undefined && accuracyPercentage >= 80
+            ? "Excellent work! You're making great progress!"
+            : accuracyPercentage !== undefined && accuracyPercentage >= 60
+            ? "Good effort! Keep practicing to improve."
+            : "Keep going! Regular practice is the key to mastery."}
         </p>
       </div>
 

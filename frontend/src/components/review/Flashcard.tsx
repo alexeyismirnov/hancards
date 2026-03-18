@@ -1,13 +1,23 @@
 import { Card } from '@/services/card.service';
+import { CardWithProgress } from '@/types/review';
 import { RotateCcw } from 'lucide-react';
 
 interface FlashcardProps {
-  card: Card;
+  card: Card | CardWithProgress;
   isFlipped: boolean;
   onFlip: () => void;
 }
 
+function isCardWithProgress(card: Card | CardWithProgress): card is CardWithProgress {
+  return 'chinese' in card;
+}
+
 export function Flashcard({ card, isFlipped, onFlip }: FlashcardProps) {
+  // Normalize the card data to handle both Card and CardWithProgress types
+  const character = isCardWithProgress(card) ? card.chinese : card.character;
+  const pinyin = card.pinyin;
+  const meaning = isCardWithProgress(card) ? card.english : card.meaning;
+
   return (
     <div className="w-full max-w-md mx-auto">
       <div
@@ -25,7 +35,7 @@ export function Flashcard({ card, isFlipped, onFlip }: FlashcardProps) {
         >
           <div className="text-center">
             <span className="text-8xl md:text-9xl font-bold text-primary select-none">
-              {card.character}
+              {character}
             </span>
           </div>
           <p className="absolute bottom-4 text-sm text-muted-foreground">
@@ -44,14 +54,14 @@ export function Flashcard({ card, isFlipped, onFlip }: FlashcardProps) {
           {/* Character (smaller) */}
           <div className="mb-6">
             <span className="text-5xl font-bold opacity-90">
-              {card.character}
+              {character}
             </span>
           </div>
 
           {/* Pinyin */}
           <div className="mb-4">
             <p className="text-2xl font-medium italic">
-              {card.pinyin}
+              {pinyin}
             </p>
           </div>
 
@@ -61,7 +71,7 @@ export function Flashcard({ card, isFlipped, onFlip }: FlashcardProps) {
           {/* Meaning */}
           <div className="text-center">
             <p className="text-xl">
-              {card.meaning}
+              {meaning}
             </p>
           </div>
 

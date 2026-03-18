@@ -8,24 +8,47 @@ datasource db {
 }
 
 model Card {
-  id        String   @id @default(cuid())
-  deckId    String
-  character String
-  pinyin    String
-  meaning   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deck      Deck     @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  id            String         @id @default(cuid())
+  deckId        String
+  character     String
+  pinyin        String
+  meaning       String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  deck          Deck           @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  progress      CardProgress[]
+  reviewRecords ReviewRecord[]
+}
+
+model CardProgress {
+  id             String   @id @default(cuid())
+  cardId         String
+  userId         String
+  easeFactor     Float    @default(2.5)
+  interval       Int      @default(0)
+  repetitions    Int      @default(0)
+  nextReviewDate DateTime @default(now())
+  lastReviewDate DateTime @default(now())
+  lapses         Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  card           Card     @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([cardId, userId])
+  @@index([userId, nextReviewDate])
 }
 
 model Deck {
-  id        String   @id @default(cuid())
-  userId    String
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  cards     Card[]
-  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id             String         @id @default(cuid())
+  userId         String
+  name           String
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  cards          Card[]
+  reviewSessions ReviewSession[]
+  User           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model DictionaryEntry {
@@ -44,12 +67,46 @@ model DictionaryEntry {
   @@index([traditional])
 }
 
+model ReviewSession {
+  id           String        @id @default(cuid())
+  userId       String
+  deckId       String
+  startedAt    DateTime      @default(now())
+  endedAt      DateTime?
+  totalCards   Int           @default(0)
+  correctCount Int           @default(0)
+  createdAt    DateTime      @default(now())
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deck         Deck          @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  records      ReviewRecord[]
+
+  @@index([userId, deckId])
+  @@index([startedAt])
+}
+
+model ReviewRecord {
+  id        String       @id @default(cuid())
+  sessionId String
+  cardId    String
+  rating    String       // 'again' | 'hard' | 'good' | 'easy'
+  reviewedAt DateTime     @default(now())
+
+  session   ReviewSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  card      Card          @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@index([cardId])
+}
+
 model User {
-  id              String   @id @default(cuid())
-  email           String   @unique
+  id             String          @id @default(cuid())
+  email          String          @unique
   passwordHash    String
-  charVariant     String   @default("simplified") // "simplified" or "traditional"
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  decks           Deck[]
+  charVariant    String          @default("simplified") // "simplified" or "traditional"
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  decks          Deck[]
+  cardProgress   CardProgress[]
+  reviewSessions ReviewSession[]
 }

@@ -10,6 +10,7 @@ import { CardList } from '@/components/card/CardList';
 import { CreateCardModal } from '@/components/card/CreateCardModal';
 import { EditCardModal } from '@/components/card/EditCardModal';
 import { DeleteCardDialog } from '@/components/card/DeleteCardDialog';
+import { DeckStats } from '@/components/deck/DeckStats';
 
 export function DeckDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -160,7 +161,7 @@ export function DeckDetailPage() {
           Back to Decks
         </Button>
 
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-3xl font-bold">{deck.name}</h1>
             <p className="text-muted-foreground mt-1">
@@ -169,31 +170,38 @@ export function DeckDetailPage() {
           </div>
           <div className="flex items-center gap-2">
             <Button
-              variant="outline"
               onClick={() => navigate(`/decks/${id}/review`)}
               disabled={cards.length === 0}
+              className="bg-primary"
             >
               <Play className="h-4 w-4 mr-2" />
-              Review {cards.length > 0 ? `(${cards.length})` : ''}
+              Start Review {cards.length > 0 ? `(${cards.length})` : ''}
             </Button>
-            <Button onClick={() => setIsCreateModalOpen(true)}>
+            <Button variant="outline" onClick={() => setIsCreateModalOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
               Add Card
             </Button>
           </div>
         </div>
 
-        {isLoadingCards ? (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-          </div>
-        ) : (
-          <CardList
-            cards={cards}
-            onEdit={handleOpenEditModal}
-            onDelete={handleOpenDeleteDialog}
-          />
-        )}
+        {/* Deck Statistics */}
+        {id && <DeckStats deckId={id} />}
+
+        {/* Card List Section */}
+        <div className="mt-8">
+          <h2 className="text-xl font-semibold mb-4">Cards</h2>
+          {isLoadingCards ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            </div>
+          ) : (
+            <CardList
+              cards={cards}
+              onEdit={handleOpenEditModal}
+              onDelete={handleOpenDeleteDialog}
+            />
+          )}
+        </div>
       </div>
 
       {/* Create Card Modal */}
