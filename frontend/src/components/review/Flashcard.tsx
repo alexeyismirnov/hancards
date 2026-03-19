@@ -19,10 +19,10 @@ export function Flashcard({ card, isFlipped, onFlip }: FlashcardProps) {
   const meaning = isCardWithProgress(card) ? card.english : card.meaning;
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="w-full max-w-md mx-auto flashcard-container">
       <div
         onClick={onFlip}
-        className="relative cursor-pointer transition-transform duration-500 ease-in-out"
+        className="flashcard relative cursor-pointer"
         style={{
           transformStyle: 'preserve-3d',
           transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
@@ -30,11 +30,11 @@ export function Flashcard({ card, isFlipped, onFlip }: FlashcardProps) {
       >
         {/* Front of card - Character */}
         <div
-          className="w-full aspect-[3/4] rounded-2xl shadow-lg bg-card border-2 border-primary/20 flex flex-col items-center justify-center p-8"
+          className="w-full aspect-[3/4] rounded-2xl shadow-lg bg-card card-ink-wash flex flex-col items-center justify-center p-8"
           style={{ backfaceVisibility: 'hidden' }}
         >
           <div className="text-center">
-            <span className="text-8xl md:text-9xl font-bold text-primary select-none">
+            <span className="text-8xl md:text-9xl font-character text-primary select-none">
               {character}
             </span>
           </div>
@@ -53,7 +53,7 @@ export function Flashcard({ card, isFlipped, onFlip }: FlashcardProps) {
         >
           {/* Character (smaller) */}
           <div className="mb-6">
-            <span className="text-5xl font-bold opacity-90">
+            <span className="text-5xl font-character opacity-90">
               {character}
             </span>
           </div>

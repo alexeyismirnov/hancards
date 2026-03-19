@@ -1,59 +1,287 @@
+@import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;600;700&family=ZCOOL+XiaoWei&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
- 
+
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    /* Font Families */
+    --font-sans: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+    --font-calligraphic: 'Ma Shan Zheng', 'ZCOOL XiaoWei', 'STKaiti', 'KaiTi', serif;
+
+    /* Backgrounds - Rice Paper #FAF7F2 */
+    --background: 40 33% 97%;
+    --foreground: 0 0% 10%;
+
+    /* Cards - Cream White #FFFEF9 */
+    --card: 60 100% 99.6%;
+    --card-foreground: 0 0% 10%;
+
+    /* Popovers */
+    --popover: 60 100% 99.6%;
+    --popover-foreground: 0 0% 10%;
+
+    /* Primary - Chinese Red #C41E3A */
+    --primary: 350 75% 45%;
+    --primary-foreground: 0 0% 98%;
+
+    /* Secondary - Light warm gray */
+    --secondary: 40 33% 92%;
+    --secondary-foreground: 0 0% 10%;
+
+    /* Muted */
+    --muted: 40 20% 95%;
+    --muted-foreground: 220 9% 46%;
+
+    /* Accent - Imperial Gold #D4A017 */
+    --accent: 43 80% 46%;
+    --accent-foreground: 0 0% 10%;
+
+    /* Destructive */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    /* Borders & Inputs - Border Gray #E5E7EB */
+    --border: 220 6% 90%;
+    --input: 220 6% 90%;
+    --ring: 350 75% 45%;
+
+    /* Semantic Colors */
+    --success: 160 84% 39%;
+    --warning: 32 95% 44%;
+    --error: 0 84% 60%;
+    --info: 199 89% 48%;
+
+    /* Radius */
     --radius: 0.5rem;
   }
- 
+
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    /* Backgrounds - Ink Charcoal #1A1A2E */
+    --background: 240 30% 14%;
+    --foreground: 40 33% 95%;
+
+    /* Cards - Dark Card #16213E */
+    --card: 220 45% 17%;
+    --card-foreground: 40 33% 95%;
+
+    /* Popovers */
+    --popover: 220 45% 17%;
+    --popover-foreground: 40 33% 95%;
+
+    /* Primary - Chinese Red (slightly lighter for dark mode) */
+    --primary: 350 70% 50%;
+    --primary-foreground: 0 0% 98%;
+
+    /* Secondary */
+    --secondary: 220 30% 22%;
+    --secondary-foreground: 40 33% 95%;
+
+    /* Muted */
+    --muted: 220 30% 20%;
+    --muted-foreground: 220 10% 60%;
+
+    /* Accent - Imperial Gold (slightly lighter for dark mode) */
+    --accent: 43 70% 50%;
+    --accent-foreground: 0 0% 10%;
+
+    /* Destructive */
+    --destructive: 0 60% 45%;
+    --destructive-foreground: 0 0% 98%;
+
+    /* Borders & Inputs - Dark Border #0F3460 */
+    --border: 210 70% 22%;
+    --input: 210 70% 22%;
+    --ring: 350 70% 50%;
+
+    /* Semantic Colors (adjusted for dark mode) */
+    --success: 160 70% 45%;
+    --warning: 32 90% 50%;
+    --error: 0 70% 50%;
+    --info: 199 80% 55%;
   }
 }
- 
+
 @layer base {
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+  }
+}
+
+@layer utilities {
+  /* Calligraphic font utility for Chinese characters */
+  .font-character {
+    font-family: var(--font-calligraphic);
+    font-weight: 400;
+  }
+
+  /* Hover lift animation for cards */
+  .hover-lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px -8px hsl(var(--primary) / 0.15);
+  }
+
+  /* Character size scale */
+  .character-xs { font-size: 1.5rem; }
+  .character-sm { font-size: 2rem; }
+  .character-md { font-size: 3rem; }
+  .character-lg { font-size: 4.5rem; }
+  .character-xl { font-size: 6rem; }
+  .character-2xl { font-size: 8rem; }
+
+  /* Tone colors for pinyin */
+  .tone-1 { color: #E53935; } /* Red - high level */
+  .tone-2 { color: #FB8C00; } /* Orange - rising */
+  .tone-3 { color: #43A047; } /* Green - falling-rising */
+  .tone-4 { color: #1E88E5; } /* Blue - falling */
+  .tone-5 { color: #757575; } /* Gray - neutral */
+
+  /* Respect reduced motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    .hover-lift {
+      transition: none;
+    }
+    .hover-lift:hover {
+      transform: none;
+    }
+  }
+}
+
+@layer components {
+  /* Ink-wash card border effect */
+  .card-ink-wash {
+    position: relative;
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  /* Gradient border effect - visible outside the card */
+  .card-ink-wash::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius);
+    padding: 2px;
+    background: linear-gradient(
+      135deg,
+      hsl(var(--primary) / 0.4) 0%,
+      hsl(var(--primary) / 0.2) 25%,
+      hsl(var(--accent) / 0.15) 50%,
+      hsl(var(--primary) / 0.2) 75%,
+      hsl(var(--primary) / 0.3) 100%
+    );
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* Subtle paper texture overlay */
+  .card-ink-wash::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius);
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+
+  /* Chinese corner ornament decoration */
+  .chinese-corner-ornament {
+    position: relative;
+  }
+
+  .chinese-corner-ornament::before,
+  .chinese-corner-ornament::after {
+    content: '〃';
+    position: absolute;
+    font-size: 1.5rem;
+    color: hsl(var(--accent) / 0.4);
+  }
+
+  .chinese-corner-ornament::before {
+    top: 0.5rem;
+    left: 0.5rem;
+  }
+
+  .chinese-corner-ornament::after {
+    bottom: 0.5rem;
+    right: 0.5rem;
+    transform: rotate(180deg);
+  }
+
+  /* Hero gradient background */
+  .hero-gradient {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--background)) 0%,
+      hsl(var(--primary) / 0.05) 50%,
+      hsl(var(--accent) / 0.05) 100%
+    );
+  }
+
+  /* Lattice pattern background */
+  .lattice-pattern {
+    background-image:
+      linear-gradient(30deg, hsl(var(--primary) / 0.03) 12%, transparent 12.5%, transparent 87%, hsl(var(--primary) / 0.03) 87.5%),
+      linear-gradient(150deg, hsl(var(--primary) / 0.03) 12%, transparent 12.5%, transparent 87%, hsl(var(--primary) / 0.03) 87.5%),
+      linear-gradient(30deg, hsl(var(--primary) / 0.03) 12%, transparent 12.5%, transparent 87%, hsl(var(--primary) / 0.03) 87.5%),
+      linear-gradient(150deg, hsl(var(--primary) / 0.03) 12%, transparent 12.5%, transparent 87%, hsl(var(--primary) / 0.03) 87.5%),
+      linear-gradient(60deg, hsl(var(--accent) / 0.04) 25%, transparent 25.5%, transparent 75%, hsl(var(--accent) / 0.04) 75%),
+      linear-gradient(60deg, hsl(var(--accent) / 0.04) 25%, transparent 25.5%, transparent 75%, hsl(var(--accent) / 0.04) 75%);
+    background-size: 80px 140px;
+    background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
+  }
+
+  /* Seal stamp decoration */
+  .seal-stamp {
+    position: relative;
+  }
+
+  .seal-stamp::after {
+    content: '印';
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: hsl(var(--primary));
+    color: white;
+    font-family: var(--font-calligraphic);
+    font-size: 0.875rem;
+    border-radius: 0.25rem;
+    border: 2px solid hsl(var(--primary) / 0.8);
+    transform: rotate(12deg);
+    box-shadow: 0 2px 4px hsl(var(--primary) / 0.3);
+  }
+
+  /* Flashcard container styling */
+  .flashcard-container {
+    perspective: 1000px;
+  }
+
+  .flashcard {
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+  }
+
+  .flashcard.flipping {
+    box-shadow:
+      0 0 20px hsl(var(--primary) / 0.2),
+      0 0 40px hsl(var(--primary) / 0.1);
   }
 }

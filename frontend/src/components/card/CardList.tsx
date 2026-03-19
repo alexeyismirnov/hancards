@@ -6,9 +6,10 @@ interface CardListProps {
   cards: CardType[];
   onEdit: (card: CardType) => void;
   onDelete: (card: CardType) => void;
+  onCardClick?: (card: CardType) => void;
 }
 
-export function CardList({ cards, onEdit, onDelete }: CardListProps) {
+export function CardList({ cards, onEdit, onDelete, onCardClick }: CardListProps) {
   if (cards.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
@@ -29,6 +30,7 @@ export function CardList({ cards, onEdit, onDelete }: CardListProps) {
           card={card}
           onEdit={onEdit}
           onDelete={onDelete}
+          onClick={onCardClick}
         />
       ))}
     </div>

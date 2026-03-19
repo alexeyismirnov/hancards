@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { CharacterVariant } from '@/services/auth.service';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 export function TopBar() {
   const { user, logout, updateCharVariant } = useAuthContext();
@@ -33,6 +34,9 @@ export function TopBar() {
           <span className="text-sm text-muted-foreground hidden sm:inline">
             {user?.email}
           </span>
+          
+          {/* Theme Toggle */}
+          <ThemeToggle />
           
           {/* Settings Dropdown */}
           <DropdownMenu>

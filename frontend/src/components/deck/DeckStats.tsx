@@ -132,11 +132,11 @@ export function DeckStats({ deckId }: DeckStatsProps) {
           </span>
         </div>
 
-        {/* Due Today */}
+        {/* Due Now */}
         <div className="flex flex-col p-4 bg-orange-50 dark:bg-orange-950/30 rounded-lg border border-orange-200 dark:border-orange-900">
           <div className="flex items-center gap-2 text-orange-600 dark:text-orange-400 mb-1">
             <Clock className="h-4 w-4" />
-            <span className="text-sm">Due Today</span>
+            <span className="text-sm">Due Now</span>
           </div>
           <span className="text-2xl font-bold text-orange-600 dark:text-orange-400">
             {stats.dueToday}
@@ -177,12 +177,12 @@ export function DeckStats({ deckId }: DeckStatsProps) {
           {stats.dueToday > 0 ? (
             <div className="flex items-center gap-1 text-orange-600 dark:text-orange-400">
               <AlertCircle className="h-4 w-4" />
-              <span>{stats.dueToday} card{stats.dueToday !== 1 ? 's' : ''} due today</span>
+              <span>{stats.dueToday} card{stats.dueToday !== 1 ? 's' : ''} due for review</span>
             </div>
           ) : (
             <div className="flex items-center gap-1 text-green-600 dark:text-green-400">
               <CheckCircle className="h-4 w-4" />
-              <span>All caught up for today!</span>
+              <span>All caught up for now!</span>
             </div>
           )}
         </div>

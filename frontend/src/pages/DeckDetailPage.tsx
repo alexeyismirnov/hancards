@@ -5,12 +5,15 @@ import { Button } from '@/components/ui/button';
 import { Layout } from '@/components/layout';
 import { deckService, Deck } from '@/services/deck.service';
 import { cardService, Card } from '@/services/card.service';
+import { reviewService } from '@/services/review.service';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { CardList } from '@/components/card/CardList';
 import { CreateCardModal } from '@/components/card/CreateCardModal';
 import { EditCardModal } from '@/components/card/EditCardModal';
 import { DeleteCardDialog } from '@/components/card/DeleteCardDialog';
+import { CardPreviewModal } from '@/components/card/CardPreviewModal';
 import { DeckStats } from '@/components/deck/DeckStats';
+import type { DeckStats as DeckStatsType } from '@/types/review';
 
 export function DeckDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -21,11 +24,13 @@ export function DeckDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingCards, setIsLoadingCards] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [deckStats, setDeckStats] = useState<DeckStatsType | null>(null);
 
   // Modal states
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -63,6 +68,27 @@ export function DeckDetailPage() {
     fetchDeck();
     fetchCards();
   }, [fetchDeck, fetchCards]);
+
+  // Fetch deck stats for review count
+  const fetchDeckStats = useCallback(async () => {
+    if (!token || !id) return;
+    try {
+      const stats = await reviewService.getDeckStats(id, token);
+      setDeckStats(stats);
+    } catch (err) {
+      console.error('Failed to fetch deck stats:', err);
+    }
+  }, [token, id]);
+
+  useEffect(() => {
+    fetchDeckStats();
+  }, [fetchDeckStats]);
+
+  // Calculate cards available for review (due now + new cards, limited to 20 new cards)
+  const NEW_CARDS_LIMIT = 20;
+  const reviewableCount = deckStats 
+    ? deckStats.dueToday + Math.min(deckStats.newCards, NEW_CARDS_LIMIT) 
+    : 0;
 
   // Create card handler
   const handleCreateCard = async (character: string, pinyin: string, meaning: string) => {
@@ -103,6 +129,12 @@ export function DeckDetailPage() {
   const handleOpenDeleteDialog = (card: Card) => {
     setSelectedCard(card);
     setIsDeleteDialogOpen(true);
+  };
+
+  // Preview card handler
+  const handleOpenPreviewModal = (card: Card) => {
+    setSelectedCard(card);
+    setIsPreviewModalOpen(true);
   };
 
   const handleDeleteCard = async (cardId: string) => {
@@ -175,7 +207,7 @@ export function DeckDetailPage() {
               className="bg-primary"
             >
               <Play className="h-4 w-4 mr-2" />
-              Start Review {cards.length > 0 ? `(${cards.length})` : ''}
+              Start Review {reviewableCount > 0 ? `(${reviewableCount})` : ''}
             </Button>
             <Button variant="outline" onClick={() => setIsCreateModalOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
@@ -199,6 +231,7 @@ export function DeckDetailPage() {
               cards={cards}
               onEdit={handleOpenEditModal}
               onDelete={handleOpenDeleteDialog}
+              onCardClick={handleOpenPreviewModal}
             />
           )}
         </div>
@@ -228,6 +261,13 @@ export function DeckDetailPage() {
         onOpenChange={setIsDeleteDialogOpen}
         onConfirm={handleDeleteCard}
         isLoading={isSubmitting}
+      />
+
+      {/* Card Preview Modal */}
+      <CardPreviewModal
+        card={selectedCard}
+        open={isPreviewModalOpen}
+        onOpenChange={setIsPreviewModalOpen}
       />
     </Layout>
   );

@@ -47,7 +47,8 @@ export function DeckCard({ deck, onEdit, onDelete }: DeckCardProps) {
 
   return (
     <Card
-      className="cursor-pointer hover:shadow-md transition-shadow relative group"
+      variant="ink-wash"
+      className="cursor-pointer hover:shadow-md transition-all hover-lift group"
       onClick={handleClick}
     >
       <CardContent className="p-6">

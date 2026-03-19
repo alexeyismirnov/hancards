@@ -368,12 +368,14 @@ export async function getDeckStats(req: Request, res: Response, next: NextFuncti
         ? progressRecords.reduce((sum: number, p: { easeFactor: number }) => sum + p.easeFactor, 0) / progressRecords.length
         : 2.5;
 
-    // Get cards due today
+    // Get cards due now (past due or due today up to now)
+    const now = new Date();
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
+    // Cards that are past due (nextReviewDate <= now)
     const dueToday = await prisma.cardProgress.count({
       where: {
         card: {
@@ -381,8 +383,7 @@ export async function getDeckStats(req: Request, res: Response, next: NextFuncti
         },
         userId,
         nextReviewDate: {
-          gte: today,
-          lt: tomorrow,
+          lte: now,
         },
       },
     });

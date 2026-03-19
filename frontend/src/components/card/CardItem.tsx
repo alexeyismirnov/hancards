@@ -12,15 +12,19 @@ interface CardItemProps {
   card: Card;
   onEdit: (card: Card) => void;
   onDelete: (card: Card) => void;
+  onClick?: (card: Card) => void;
 }
 
-export function CardItem({ card, onEdit, onDelete }: CardItemProps) {
+export function CardItem({ card, onEdit, onDelete, onClick }: CardItemProps) {
   return (
-    <div className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+    <div 
+      className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-accent/50 transition-all hover-lift cursor-pointer"
+      onClick={() => onClick?.(card)}
+    >
       <div className="flex items-center gap-6 flex-1 min-w-0">
-        {/* Character */}
+        {/* Character with calligraphic font */}
         <div className="flex-shrink-0 w-16 text-center">
-          <span className="text-3xl font-bold text-primary">{card.character}</span>
+          <span className="text-3xl font-character text-primary">{card.character}</span>
         </div>
 
         {/* Pinyin and Meaning */}
@@ -31,7 +35,7 @@ export function CardItem({ card, onEdit, onDelete }: CardItemProps) {
       </div>
 
       {/* Actions */}
-      <div className="flex-shrink-0 ml-4">
+      <div className="flex-shrink-0 ml-4" onClick={(e) => e.stopPropagation()}>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="h-8 w-8">
